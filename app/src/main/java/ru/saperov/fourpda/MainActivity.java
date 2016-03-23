@@ -61,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
                       //  Log.d(TAG, "myElement=" + myElement.html());
                       //  Log.d(TAG, "eVisual=" + eVisual.html());
                       //  Log.d(TAG, "eDescription=" + eDescription.html());
-                        Log.d(TAG, "href=" + eLinks.attr("href"));
-                        Log.d(TAG, "title=" + eLinks.attr("title"));
-                        Log.d(TAG, "p=" + eDescription.select("p").text());
+                        Log.d(TAG, "href=" + eLinks.attr("href").toString());
+                        Log.d(TAG, "title=" + eLinks.attr("title").toString());
+                        Log.d(TAG, "desc=" + eDescription.select("p").text());
                         Log.d(TAG, "srcImg=" + eVisual.select("img").attr("src"));
                     }
                     //title = myElement.text();
