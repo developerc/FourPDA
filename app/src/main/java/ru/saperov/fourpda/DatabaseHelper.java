@@ -3,6 +3,7 @@ package ru.saperov.fourpda;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
@@ -32,6 +33,18 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
             + COLUMN_SRC_IMG + " text"
             + ");";
 
+ /*   public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
+    }*/
+
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+    public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
+                          int version, DatabaseErrorHandler errorHandler) {
+        super(context, name, factory, version, errorHandler);
+    }
+
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -52,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         onCreate(db);
     }
 
-    public void addFrcst(DbWrapper dbWrapper){
+    public void addNews(DbWrapper dbWrapper){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -109,7 +122,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     }
 
     //удалить таблицу и создать
-    public void upgradeFrcst() {
+    public void upgradeNews() {
         SQLiteDatabase db = this.getWritableDatabase();
         String delQuery = "DROP TABLE  " + DATABASE_TABLE+";";
         // Удаляем старую таблицу и создаём новую
