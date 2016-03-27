@@ -13,12 +13,12 @@ import java.util.ArrayList;
  * Created by saperov on 24.03.16.
  */
 public class CustomTitlesAdapter extends ArrayAdapter<ModelTitle> {
-  /*  public CustomTitlesAdapter(Context context, int resource) {
-        super(context, resource);
-    }*/
-  public CustomTitlesAdapter(Context context, ArrayList<ModelTitle> modelTitles){
-      super(context, 0, modelTitles);
-  }
+    /*  public CustomTitlesAdapter(Context context, int resource) {
+          super(context, resource);
+      }*/
+    public CustomTitlesAdapter(Context context, ArrayList<ModelTitle> modelTitles){
+        super(context, 0, modelTitles);
+    }
 
     public View getView(int position, View convertView, ViewGroup parent) {
         ModelTitle modelTitle = getItem(position);

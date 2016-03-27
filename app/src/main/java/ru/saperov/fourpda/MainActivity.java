@@ -11,7 +11,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +29,20 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "myLogs";
     private static DatabaseHelper mDatabaseHelper;
     public static ArrayList<String> lstTitle = new ArrayList<String>();
+    public static String dscNews="";
+    public static String srcImgNews;
+    private ProgressBar spinner;
     TextView tvTitle;
+    //public static int posTitleClick;
+    public List<DbWrapper> lstWrapperNews;
+
     ArrayList<ModelTitle> arrayOfTitles;
     CustomTitlesAdapter adapter;
     ListView lvTitles;
 
+    ArrayList<ModelNews> arrayOfNews;
+    CustomNewsAdapter newsAdapter;
+    ListView lvNews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
         tvTitle = (TextView) findViewById(R.id.tvName1);
 
+        spinner = (ProgressBar)findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.GONE);
+        lvTitles = (ListView) findViewById(R.id.lvTitles);
+        lvTitles.setOnItemClickListener(itemTitleClickListener);
+/*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
         mDatabaseHelper = new DatabaseHelper(this);
     }
 
@@ -68,6 +84,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class GetAsincTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            spinner.setVisibility(View.VISIBLE);
+            //listView.setVisibility(View.GONE);
+            super.onPreExecute();
+        }
 
         @Override
         protected String doInBackground(String... params) {
@@ -115,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-          //  mTextView.setText(result);
+            spinner.setVisibility(View.GONE);
             showNewsFromDBase();
 
         }
@@ -124,21 +147,45 @@ public class MainActivity extends AppCompatActivity {
     public void showNewsFromDBase(){
         if(mDatabaseHelper.getNewsCount()>0){
             lstTitle.clear();
-            List<DbWrapper> lstWrapperNews = mDatabaseHelper.getAllNews();
+            lstWrapperNews = mDatabaseHelper.getAllNews();
             for (int i=0; i<lstWrapperNews.size(); i++){
                 lstTitle.add(lstWrapperNews.get(i).getTitle());
                 Log.d(TAG, "lstTitle=" + lstWrapperNews.get(i).getTitle());
             }
-           // populating data into a listview
+            dscNews = lstWrapperNews.get(1).getDesc();
+            srcImgNews = lstWrapperNews.get(1).getSrcImg();
+           // populating data into a lvTitles
             arrayOfTitles = ModelTitle.getTitles();
             adapter = new CustomTitlesAdapter(this, arrayOfTitles);
-            lvTitles = (ListView) findViewById(R.id.lvTitles);
+         //   lvTitles = (ListView) findViewById(R.id.lvTitles);
             lvTitles.setAdapter(adapter);
+
+            //populating data into lvNews
+            arrayOfNews = ModelNews.getNoNews();
+            newsAdapter = new CustomNewsAdapter(this, arrayOfNews);
+            lvNews = (ListView) findViewById(R.id.lvNews);
+            lvNews.setAdapter(newsAdapter);
         } else {
             Toast.makeText(getApplicationContext(), "News are missing!", Toast.LENGTH_SHORT).show();
         }
 
     }
+
+    //обрабатываем нажатие на списке заголовков
+    protected AdapterView.OnItemClickListener itemTitleClickListener = new AdapterView.OnItemClickListener(){
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            view.setSelected(true);
+            dscNews = lstWrapperNews.get(position).getDesc();
+            srcImgNews = lstWrapperNews.get(position).getSrcImg();
+            //populating data into lvNews
+            arrayOfNews = ModelNews.getNoNews();
+            newsAdapter = new CustomNewsAdapter(getApplicationContext(), arrayOfNews);
+            lvNews = (ListView) findViewById(R.id.lvNews);
+            lvNews.setAdapter(newsAdapter);
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
