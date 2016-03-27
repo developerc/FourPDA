@@ -3,8 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ru.saperov.fourpda.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_news"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/text_news"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_articles"
+        android:orderInCategory="99"
+        android:title="@string/text_articles"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_software"
+        android:orderInCategory="98"
+        android:title="@string/text_software"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_games"
+        android:orderInCategory="97"
+        android:title="@string/text_games"
+        app:showAsAction="never" />
+
 </menu>

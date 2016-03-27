@@ -37,38 +37,25 @@ public class CustomNewsAdapter extends ArrayAdapter<ModelNews> {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        ModelNews modelNews = getItem(position);
-        if (convertView == null) {
-            // Получим тип для заданной позиции
-            type = getItemViewType(position);
-            // Раздуваем XML-разметку для данного типа
-            if(type==0){convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_news_top, parent, false);}
-            else if(type==1) {
+        // Получим тип для заданной позиции
+        type = getItemViewType(position);
+
+        switch (type){
+            case 0:
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_news_top, parent, false);
+                ImageView ivNews = (ImageView) convertView.findViewById(R.id.ivNews);
+                Picasso.with(this.getContext()).load(MainActivity.srcImgNews).placeholder(R.drawable.emptytrash).into(ivNews);
+                break;
+            case 1:
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_news_bottom, parent, false);
-            }
-           // convertView = getInflatedLayoutForType(type);
-        }
-        if(type==0){
-            ImageView ivNews = (ImageView) convertView.findViewById(R.id.ivNews);
-            Picasso.with(this.getContext()).load(MainActivity.srcImgNews).placeholder(R.drawable.emptytrash).into(ivNews);
+                tvNews = (TextView) convertView.findViewById(R.id.tvNews);
+                tvNews.setText(MainActivity.dscNews);
+                break;
         }
 
-        if(type==1) {
-            tvNews = (TextView) convertView.findViewById(R.id.tvNews);
-            tvNews.setText(MainActivity.dscNews);
-        }
 
         return convertView;
     }
 
-   /* private View getInflatedLayoutForType(int type) {
-        if(type==0){
-            return LayoutInflater.from(getContext()).inflate(R.layout.item_news_top, null);
-        } else if(type==1){
-            return LayoutInflater.from(getContext()).inflate(R.layout.item_news_top, null);
-        } else {
-            return null;
-        }
 
-    }*/
 }
