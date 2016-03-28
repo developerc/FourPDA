@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private String menuSelect = "news";
     private int cntScrollTitle=1;
     public static String articleHref=null;
+    public boolean appAlive=false;
+    public int lastNumArticle;
    // TextView tvTitle;
     //public static int posTitleClick;
     public List<DbWrapper> lstWrapperNews;
@@ -76,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 Log.d(TAG, "scrollState = " + scrollState);
                 if(lvTitles.getLastVisiblePosition()==arrayOfTitles.size() - 1){
+                    lastNumArticle = mDatabaseHelper.getNewsCount();
                     cntScrollTitle++;
                     Log.d(TAG, httpATask + menuSelect + "/page/" + cntScrollTitle);
                     new GetAsincTask().execute(httpATask + menuSelect + "/page/" + cntScrollTitle);
@@ -89,12 +92,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mDatabaseHelper = new DatabaseHelper(this);
+       // populateNewsList();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        populateNewsList();
+        if(appAlive == false) populateNewsList();
 
     }
 
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         if(isOnline()) {
             mDatabaseHelper.delAllNews();
             new GetAsincTask().execute(httpATask + menuSelect);
+            appAlive = true;
         } else {
             showNewsFromDBase();
         }
@@ -110,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class GetAsincTask extends AsyncTask<String, Void, String> {
-
+        int cntArticles =0;
         @Override
         protected void onPreExecute() {
             spinner.setVisibility(View.VISIBLE);
@@ -134,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                     Elements eVisual = myElement.select("div.visual");
                     Elements eDescription = myElement.select("div.description");
 
-                    if(eDescription.text().toString().length()>0) {
+                    if(eDescription.text().toString().length()>0 && cntArticles!=0) {
                         Elements eLinks = eDescription.select("a");
 
                       //  Log.d(TAG, "myElement=" + myElement.html());
@@ -150,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                         srcImg = eVisual.select("img").attr("src");
                         mDatabaseHelper.addNews(new DbWrapper(title, href, desc, srcImg));
                     }
-                    //title = myElement.text();
+                    cntArticles++;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -164,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
             spinner.setVisibility(View.GONE);
             showNewsFromDBase();
-
+            //lvTitles.setVerticalScrollbarPosition(15);
         }
     }
 
@@ -176,9 +181,9 @@ public class MainActivity extends AppCompatActivity {
                 lstTitle.add(lstWrapperNews.get(i).getTitle());
                 Log.d(TAG, i+" lstTitle=" + lstWrapperNews.get(i).getTitle());
             }
-            dscNews = lstWrapperNews.get(1).getDesc();
-            srcImgNews = lstWrapperNews.get(1).getSrcImg();
-            articleHref = lstWrapperNews.get(1).getHref();
+            dscNews = lstWrapperNews.get(0).getDesc();
+            srcImgNews = lstWrapperNews.get(0).getSrcImg();
+            articleHref = lstWrapperNews.get(0).getHref();
            // populating data into a lvTitles
             arrayOfTitles = ModelTitle.getTitles();
             adapter = new CustomTitlesAdapter(this, arrayOfTitles);
@@ -190,6 +195,8 @@ public class MainActivity extends AppCompatActivity {
             newsAdapter = new CustomNewsAdapter(this, arrayOfNews);
             //lvNews = (ListView) findViewById(R.id.lvNews);
             lvNews.setAdapter(newsAdapter);
+
+            lvTitles.setSelection(lastNumArticle);
         } else {
             Toast.makeText(getApplicationContext(), "News are missing!", Toast.LENGTH_SHORT).show();
         }

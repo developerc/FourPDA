@@ -24,6 +24,7 @@
         </activity>
         <activity android:name=".fullArticle"
             android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:screenOrientation="landscape"
             ></activity>
     </application>
 

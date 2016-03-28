@@ -25,12 +25,12 @@ public class fullArticle extends AppCompatActivity {
         setContentView(R.layout.activity_full_article);
 
         mWebView = (WebView) findViewById(R.id.webView);
-       // htmlText = "<html><body>Percent test: 100% </body></html>";
+        htmlText = "<html><body>Loading, please wait ... </body></html>";
         // включаем поддержку JavaScript
         mWebView.getSettings().setJavaScriptEnabled(true);
         // указываем страницу загрузки
         //mWebView.loadUrl("http://pchelka.teleknot.ru");
-        //mWebView.loadDataWithBaseURL(null, htmlText, "text/html", "en_US", null);
+        mWebView.loadDataWithBaseURL(null, htmlText, "text/html", "en_US", null);
         loadArticle();
         mWebView.setWebViewClient(new MyWebViewClient());
     }
